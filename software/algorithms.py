@@ -34,7 +34,6 @@ def greedy_allocate(remainder, v_list, a_list=None, pointer=0):
     if a_list is None:
         a_list = [0] * n
 
-    print(a_list)
     # If the reminder is 0, return the result
     if remainder == 0:
         return remainder, v_list, a_list, pointer - 1
@@ -122,5 +121,5 @@ if __name__ == '__main__':
     print(allocate(14, [8, 5, 2]))
     print("test 11:")
     print(allocate(11, [8, 5, 2]))
-    # print(allocate(10, [5, 2]))
+    print(allocate(10, [5, 2]))
     # print(allocate(12, [3, 5, 9]))

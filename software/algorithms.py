@@ -34,31 +34,36 @@ def greedy_allocate(remainder, v_list, a_list=None, pointer=0):
     if a_list is None:
         a_list = [0] * n
 
-    a_list[pointer] = remainder // v_list[pointer]
-    remainder = remainder % v_list[pointer]
+    print(a_list)
+    # If the reminder is 0, return the result
+    if remainder == 0:
+        return remainder, v_list, a_list, pointer - 1
 
-    # If this bin is the last, return the result
+    # If divisible, allocate the reminder to the bin and return
+    if remainder % v_list[pointer] == 0:
+        a_list[pointer] = remainder // v_list[pointer]
+        remainder = 0
+        return remainder, v_list, a_list, pointer - 1
+
+    # if not divisible but reach the last bin, return
     if pointer == n - 1:
-        pointer -= 1
-        return remainder, v_list, a_list, pointer
+        return remainder, v_list, a_list, pointer - 1
 
-    # If not divisible, try next smaller bin
-    if remainder > 0:
+    # Otherwise try next smaller bin
+    else:
+        a_list[pointer] = remainder // v_list[pointer]
+        remainder = remainder % v_list[pointer]
         pointer += 1
         remainder, v_list, a_list, pointer = greedy_allocate(remainder, v_list, a_list, pointer)
 
-    # If the reminder is 0, return the result
-    if remainder == 0:
-        return remainder, v_list, a_list, pointer
-
     # If still not divisible, remove one of this pack and allocate to smaller bins
-    if a_list[pointer] > 0:
+    if remainder > 0 and a_list[pointer] > 0:
         a_list[pointer] -= 1
         remainder = remainder + v_list[pointer]
         pointer += 1
         remainder, v_list, a_list, pointer = greedy_allocate(remainder, v_list, a_list, pointer)
 
-    return remainder, v_list, a_list, pointer
+    return remainder, v_list, a_list, pointer - 1
 
 
 def exhaustive_allocate(remainder, v_list, a_list=None, pointer=0, a_list_opt=None):
@@ -111,7 +116,11 @@ def exhaustive_allocate(remainder, v_list, a_list=None, pointer=0, a_list_opt=No
 
 
 if __name__ == '__main__':
-    allocate = exhaustive_allocate
+    #allocate = exhaustive_allocate
+    allocate = greedy_allocate
+    print("test 14:")
     print(allocate(14, [8, 5, 2]))
+    print("test 11:")
+    print(allocate(11, [8, 5, 2]))
     # print(allocate(10, [5, 2]))
     # print(allocate(12, [3, 5, 9]))

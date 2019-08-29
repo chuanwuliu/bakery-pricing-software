@@ -111,13 +111,13 @@ def exhaustive_allocate(remainder, v_list, a_list=None, pointer=0, a_list_opt=No
                 pass
 
         if pointer < n - 1:
-            a_list_opt = exhaustive_allocate(remainder, v_list, a_list, pointer + 1, a_list_opt)
-    return a_list_opt
+            v_list, a_list_opt = exhaustive_allocate(remainder, v_list, a_list, pointer + 1, a_list_opt)
+    return v_list, a_list_opt
 
 
 if __name__ == '__main__':
-    #allocate = exhaustive_allocate
-    allocate = greedy_allocate
+    allocate = exhaustive_allocate
+    #allocate = greedy_allocate
     print("test 14:")
     print(allocate(14, [8, 5, 2]))
     print("test 11:")

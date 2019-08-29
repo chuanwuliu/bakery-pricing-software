@@ -57,13 +57,13 @@ class Processor(object):
             quantity = order['quantity']
             v_list, a_list = self.process_by_code(code, quantity)
             items = df_prod[df_prod['code'] == code]
-            p_list = items.sort_values(by='units')['price'].to_list()
+            p_list = items.sort_values(by='units', ascending=False)['price'].to_list()
             total_price = np.dot(p_list, a_list)
-            print("{} {} $ {}".format(quantity, code, total_price))
+            print("{} {} $ {}".format(quantity, code, total_price.round(2)))
             for i in range(len(v_list)):
                 a = a_list[i]
                 if a > 0:
-                    print('    {} \u2715 {} $ {}\n'.format(a, v_list[i], p_list[i]))
+                    print('    {} \u2715 {} $ {}'.format(a, v_list[i], p_list[i]))
 
 
 if __name__ == '__main__':

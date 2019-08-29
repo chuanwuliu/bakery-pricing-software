@@ -2,6 +2,9 @@
 This module config product information from the bakery.
 """
 
+# Maximum production capacity
+CAPACITY = 100000
+
 # Products data columns
 columns = ["name", "code", "units", "price"]
 

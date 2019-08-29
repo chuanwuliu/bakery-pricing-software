@@ -1,6 +1,6 @@
 import numpy as np
 import pandas as pd
-from .errors import NoSolution, ExceedCapacity
+from .errors import *
 from .config import CAPACITY, columns, data
 from .algorithms import greedy_allocate as allocate
 
@@ -32,6 +32,8 @@ class Processor(object):
             raise ExceedCapacity()
         if (quantity % 1 > 0).any():
             raise ValueError('{} <== Only integer number accepted!'.format(quantity))
+        if set(df.code.unique()) - set(self.product_table.code.unique()):
+            raise ProductCodeError()
         return df
 
     def process_by_code(self, code, quantity):

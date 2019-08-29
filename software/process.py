@@ -37,7 +37,7 @@ class Processor(object):
     def process_by_code(self, code, quantity):
         df = self.product_table
         items = df[df['code'] == code]
-        v_packs = items['units'].to_list
+        v_packs = items['units'].to_list()
         try:
             remainder, v_list, a_list, pointer = allocate(quantity, v_packs)
             if remainder > 0:
@@ -52,18 +52,18 @@ class Processor(object):
     def process_order(self, path):
         df_order = self.order_data(path)
         df_prod = self.product_table
-        for order in df_order.iterrows():
+        for index, order in df_order.iterrows():
             code = order['code']
             quantity = order['quantity']
             v_list, a_list = self.process_by_code(code, quantity)
-            p_list = [df_prod[(df_prod['code'] == code) &
-                              (df_prod['units'] == v)]['price'] for v in v_list]
+            items = df_prod[df_prod['code'] == code]
+            p_list = items.sort_values(by='units')['price'].to_list()
             total_price = np.dot(p_list, a_list)
-            print("{} {} $ {}\n".format(quantity, code, total_price))
+            print("{} {} $ {}".format(quantity, code, total_price))
             for i in range(len(v_list)):
                 a = a_list[i]
                 if a > 0:
-                    print('{} \u2715 {} $ {}\n'.format(a, v_list[i], p_list[i]))
+                    print('    {} \u2715 {} $ {}\n'.format(a, v_list[i], p_list[i]))
 
 
 if __name__ == '__main__':

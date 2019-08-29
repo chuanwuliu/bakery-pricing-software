@@ -74,44 +74,28 @@ def exhaustive_allocate(remainder, v_list, a_list=None, pointer=0, a_list_opt=No
 
     Examples:
     >>> exhaustive_allocate(14, [8, 5, 2])
-    [0, 0, 0] 0
-    [0, 0, 0] 0
-    [0, 0, 0] 0
-    [0, 0, 1] 2
-    [0, 0, 2] 4
-    [0, 0, 3] 6
-    [0, 0, 4] 8
-    [0, 0, 5] 10
-    [0, 0, 6] 12
     [0, 0, 7] 14 <== Potential Solution
-    [0, 1, 7] 19
-    [0, 1, 0] 5
-    [0, 1, 1] 7
-    [0, 1, 2] 9
-    [0, 1, 3] 11
-    [0, 1, 4] 13
-    [0, 2, 4] 18
-    [0, 2, 0] 10
-    [0, 2, 1] 12
     [0, 2, 2] 14 <== Potential Solution
-    [1, 2, 2] 22
-    [1, 0, 2] 12
-    [1, 0, 0] 8
-    [1, 0, 1] 10
-    [1, 0, 2] 12
     [1, 0, 3] 14 <== Potential Solution
-    [1, 1, 3] 19
-    [1, 1, 0] 13
     [[0, 2, 2], [1, 0, 3]]
     """
     n = len(v_list)
+    # Initialise allocation list
     if a_list is None: a_list = [0] * n
+
+    # Volume of current pack
     v = v_list[pointer]
+
+    # Unallocated remainder
     m = remainder - np.dot(a_list[:pointer], v_list[:pointer]).sum()
+
+    # Exhaustive search Loop
     for k in range(0, (int(m) // v) + 1):
         a_list[pointer] = k
+        # If the allocation satisfy the requirement.
         if np.dot(a_list, v_list).sum() == remainder:
             print(a_list, np.dot(a_list, v_list).sum(), "<== Potential Solution")
+            # Compare with optimal results, if better, update the optimal allocation
             if a_list_opt is None:
                 a_list_opt = [a_list.copy()]
             elif np.sum(a_list) == np.sum(a_list_opt[0]):
@@ -120,15 +104,14 @@ def exhaustive_allocate(remainder, v_list, a_list=None, pointer=0, a_list_opt=No
                 a_list_opt = [a_list.copy()]
             else:
                 pass
-        else:
-            print(a_list, np.dot(a_list, v_list).sum())
+
         if pointer < n - 1:
             a_list_opt = exhaustive_allocate(remainder, v_list, a_list, pointer + 1, a_list_opt)
     return a_list_opt
 
 
 if __name__ == '__main__':
-    allocate = greedy_allocate
+    allocate = exhaustive_allocate
     print(allocate(14, [8, 5, 2]))
-    print(allocate(10, [5, 2]))
-    print(allocate(12, [3, 5, 9]))
+    # print(allocate(10, [5, 2]))
+    # print(allocate(12, [3, 5, 9]))

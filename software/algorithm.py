@@ -11,10 +11,17 @@ def greedy_allocate(remainder, v_list, a_list=None, pointer=0):
 
     :param remainder: int, remainder number
     :param v_list: list, pack volumes (number of units of each pack)
-    :param a_list: list, number to each pack
+    :param a_list: list, allocated number to each pack
     :param pointer: int, recursion pointer
-
     :return: same as arguments.
+
+    Examples:
+    >>> greedy_allocate(10, [5, 2])
+    (0, [5, 2], [2, 0], 0)
+    >>> greedy_allocate(14, [8, 5, 2])
+    (0, [8, 5, 2], [1, 0, 3], 1)
+    >>> greedy_allocate(13, [5, 3])
+    (0, [5, 3], [2, 1], 0)
     """
 
     # Sort bin sizes in descending order
@@ -54,25 +61,74 @@ def greedy_allocate(remainder, v_list, a_list=None, pointer=0):
     return remainder, v_list, a_list, pointer
 
 
-def exhaustive_allocate(remainder, v_list, a_list=None, pointer=0):
+def exhaustive_allocate(remainder, v_list, a_list=None, pointer=0, a_list_opt=None):
+    """
+    Exhaustive pack allocation algorithm.
+
+    :param remainder: int, remainder number
+    :param v_list: list, pack volumes (number of units of each pack)
+    :param a_list: list, allocated number to each pack
+    :param pointer: int, recursion pointer
+    :param a_list_opt: list, current optimal allocation list
+    :return: list, current optimal allocation list
+
+    Examples:
+    >>> exhaustive_allocate(14, [8, 5, 2])
+    [0, 0, 0] 0
+    [0, 0, 0] 0
+    [0, 0, 0] 0
+    [0, 0, 1] 2
+    [0, 0, 2] 4
+    [0, 0, 3] 6
+    [0, 0, 4] 8
+    [0, 0, 5] 10
+    [0, 0, 6] 12
+    [0, 0, 7] 14 <== Potential Solution
+    [0, 1, 7] 19
+    [0, 1, 0] 5
+    [0, 1, 1] 7
+    [0, 1, 2] 9
+    [0, 1, 3] 11
+    [0, 1, 4] 13
+    [0, 2, 4] 18
+    [0, 2, 0] 10
+    [0, 2, 1] 12
+    [0, 2, 2] 14 <== Potential Solution
+    [1, 2, 2] 22
+    [1, 0, 2] 12
+    [1, 0, 0] 8
+    [1, 0, 1] 10
+    [1, 0, 2] 12
+    [1, 0, 3] 14 <== Potential Solution
+    [1, 1, 3] 19
+    [1, 1, 0] 13
+    [[0, 2, 2], [1, 0, 3]]
+    """
     n = len(v_list)
-    if a_list is None: a_list = np.zeros(n)
-    v_list = np.array(v_list)
+    if a_list is None: a_list = [0] * n
     v = v_list[pointer]
-    m = remainder - (a_list * v_list)[:pointer].sum()
+    m = remainder - np.dot(a_list[:pointer], v_list[:pointer]).sum()
     for k in range(0, (int(m) // v) + 1):
         a_list[pointer] = k
-        if (a_list * v_list).sum() == remainder:
-            print(a_list, (a_list * v_list).sum(), "Found")
+        if np.dot(a_list, v_list).sum() == remainder:
+            print(a_list, np.dot(a_list, v_list).sum(), "<== Potential Solution")
+            if a_list_opt is None:
+                a_list_opt = [a_list.copy()]
+            elif np.sum(a_list) == np.sum(a_list_opt[0]):
+                a_list_opt.append(a_list.copy())
+            elif np.sum(a_list) < np.sum(a_list_opt[0]):
+                a_list_opt = [a_list.copy()]
+            else:
+                pass
         else:
-            print(a_list, (a_list * v_list).sum())
+            print(a_list, np.dot(a_list, v_list).sum())
         if pointer < n - 1:
-            exhaustive_allocate(remainder, v_list, a_list, pointer + 1)
-    a_list[pointer] = 0
+            a_list_opt = exhaustive_allocate(remainder, v_list, a_list, pointer + 1, a_list_opt)
+    return a_list_opt
 
 
 if __name__ == '__main__':
-    allocate = exhaustive_allocate
+    allocate = greedy_allocate
     print(allocate(14, [8, 5, 2]))
-    # print(allocate(10, [5, 2]))
-    # print(allocate(12, [3, 5, 9]))
+    print(allocate(10, [5, 2]))
+    print(allocate(12, [3, 5, 9]))

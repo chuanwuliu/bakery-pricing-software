@@ -7,12 +7,12 @@ import numpy as np
 
 def greedy_allocate(remainder, v_list, a_list=None, pointer=0):
     """
-    Allocate remainders to bins (packs).
+    Allocate order remainder to packs - greedy approximation.
 
-    :param remainder: int, remainder number.
-    :param v_list: list, bin volumes (number of units of each pack)
-    :param a_list: list, number to each bin
-    :param pointer: int, recursion pointer.
+    :param remainder: int, remainder number
+    :param v_list: list, pack volumes (number of units of each pack)
+    :param a_list: list, number to each pack
+    :param pointer: int, recursion pointer
 
     :return: same as arguments.
     """
@@ -44,12 +44,14 @@ def greedy_allocate(remainder, v_list, a_list=None, pointer=0):
     if remainder == 0:
         return remainder, v_list, a_list, pointer
 
-    # If still not divisible, remove one this bin and allocate to smaller bins
+    # If still not divisible, remove one of this pack and allocate to smaller bins
     if a_list[pointer] > 0:
         a_list[pointer] -= 1
         remainder = remainder + v_list[pointer]
         pointer += 1
-        return greedy_allocate(remainder, v_list, a_list, pointer)
+        remainder, v_list, a_list, pointer = greedy_allocate(remainder, v_list, a_list, pointer)
+
+    return remainder, v_list, a_list, pointer
 
 
 def exhaustive_allocate(remainder, v_list, a_list=None, pointer=0):
@@ -70,7 +72,7 @@ def exhaustive_allocate(remainder, v_list, a_list=None, pointer=0):
 
 
 if __name__ == '__main__':
-    allocate = greedy_allocate
+    allocate = exhaustive_allocate
     print(allocate(14, [8, 5, 2]))
-    print(allocate(10, [5, 2]))
-    print(allocate(12, [3, 5, 9]))
+    # print(allocate(10, [5, 2]))
+    # print(allocate(12, [3, 5, 9]))

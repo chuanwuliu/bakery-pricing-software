@@ -8,10 +8,11 @@ class NoSolution(Exception):
         super().__init__(message)
 
 
-class ExceedCapacity(Exception):
-    def __init__(self, message='Exceed production capacity!'):
+class ProductError(Exception):
+    def __init__(self, message='Product Error!'):
         super().__init__(message)
 
-class ProductCodeError(Exception):
-    def __init__(self, message='Code error in order!'):
+class OrderError(Exception):
+    def __init__(self, message='Order Error!'):
         super().__init__(message)
+

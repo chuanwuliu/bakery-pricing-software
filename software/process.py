@@ -6,7 +6,7 @@ import os
 import json
 import numpy as np
 from .errors import *
-from .algorithms import greedy_allocate as allocate
+from .algorithms import greedy_allocate, exhaustive_allocate
 
 work_dir = os.path.dirname(__file__)
 projects_path = os.path.join(work_dir, 'products.json')
@@ -16,13 +16,18 @@ class Processor(object):
     """
     Processor class
     """
-    def __init__(self, product_table=None):
+    def __init__(self, product_table=None, algorithm='greedy'):
         """
         Processor initialization.
 
         :param product_table: dict, product table, default None.
         """
         self._product_table = product_table
+        self._algorithm = algorithm
+
+    @property
+    def algorithm(self):
+        return self._algorithm
 
     @property
     def product_table(self):
@@ -104,15 +109,17 @@ class Processor(object):
         for code, quantity in order.items():
             # Allocate packs to order using algorithms
             v_list = self.pack_volumes(code)
-            try:
-                remainder, v_list, a_list, pointer = allocate(quantity, v_list)
+            if self.algorithm.lower() == 'greedy':
+                remainder, v_list, a_list, pointer = greedy_allocate(quantity, v_list)
                 if remainder > 0:
                     raise NoSolution("{} <-- {}".format(v_list, remainder))
-            except ValueError:
-                v_list, a_list_opt = allocate(quantity, v_list)
+            elif self.algorithm.lower() == 'exhaustive':
+                v_list, a_list_opt = exhaustive_allocate(quantity, v_list)
                 if a_list_opt is None:
                     raise NoSolution()
                 a_list = a_list_opt[0]
+            else:
+                raise ValueError('Wrong Algorithm!')
 
             # Price and output
             price_list = [self.pack_price(code, units) for units in v_list]

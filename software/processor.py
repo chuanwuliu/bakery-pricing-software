@@ -6,7 +6,7 @@ import os
 import json
 import numpy as np
 from .errors import *
-from .algorithms import greedy_allocate, exhaustive_allocate
+from .algos import greedy_allocate, exhaustive_allocate
 
 work_dir = os.path.dirname(__file__)
 projects_path = os.path.join(work_dir, 'products.json')
@@ -78,7 +78,10 @@ class Processor(object):
         :param code: str, product code
         :return: int
         """
-        return self.product_table['capacity'][code]
+        if code in self.product_table['capacity']:
+            return self.product_table['capacity'][code]
+        else:
+            return np.inf
 
     def order_data(self, path: str):
         """
@@ -94,9 +97,9 @@ class Processor(object):
             if code not in self.product_table:
                 raise OrderError('{} <== Wrong order code!'.format(code))
             if quantity > self.capacity(code):
-                raise OrderError('{} <== Order quantity exceed Capacity!'.format(quantity))
-            if quantity % 1 > 0:
-                raise OrderError('{} <== Only integer number accepted!'.format(quantity))
+                raise OrderError('{} <== Order quantity exceed capacity!'.format(quantity))
+            if quantity % 1 > 0 or quantity < 1:
+                raise OrderError('{} <== Only positive integers accepted!'.format(quantity))
         return order
 
     def process_order(self, path: str):
@@ -106,9 +109,13 @@ class Processor(object):
         :param path: str, path to the input order.
         """
         order = self.order_data(path)
+        output = {}
+
         for code, quantity in order.items():
             # Allocate packs to order using algorithms
             v_list = self.pack_volumes(code)
+            price_list = [self.pack_price(code, units) for units in v_list]
+
             if self.algorithm.lower() == 'greedy':
                 remainder, v_list, a_list, pointer = greedy_allocate(quantity, v_list)
                 if remainder > 0:
@@ -121,8 +128,16 @@ class Processor(object):
             else:
                 raise ValueError('Wrong Algorithm!')
 
-            # Price and output
-            price_list = [self.pack_price(code, units) for units in v_list]
+            output[code] = {}
+            total_price = np.dot(a_list, price_list).sum()
+            output[code]["price"] = total_price
+            output[code]['packs'] = {}
+            for i in range(len(a_list)):
+                if a_list[i] > 0:
+                    pack = '{} $ {}'.format(v_list[i], price_list[i])
+                    output[code]['packs'][pack] = a_list[i]
+
+            # This is tweak for printing expected example
             total_price = np.dot(a_list, price_list).sum()
             print("{} {} $ {}".format(quantity, code, total_price.round(2)))
             for i in range(len(v_list)):
@@ -130,8 +145,10 @@ class Processor(object):
                 if a > 0:
                     print('      {} \u2715 {} $ {}'.format(a, v_list[i], price_list[i]))
 
+        return output
 
 if __name__ == '__main__':
     p = Processor()
     path = '/Users/charles_liu/Github/bakery-pricing-software/tests/input_1.csv'
-    p.process_order(path)
+    print(p.process_order(path))
+

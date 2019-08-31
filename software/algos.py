@@ -13,9 +13,10 @@ def greedy_allocate(remainder: int, v_list: list, a_list: list = None, pointer: 
     :param v_list: list, pack volumes (number of units of each pack)
     :param a_list: list, allocated number to each pack
     :param pointer: int, recursion pointer
-    :return: same as arguments.
+    :return: same as arguments
 
     Examples:
+
     >>> greedy_allocate(10, [5, 2])
     (0, [5, 2], [2, 0], 0)
     >>> greedy_allocate(14, [8, 5, 2])
@@ -55,8 +56,8 @@ def greedy_allocate(remainder: int, v_list: list, a_list: list = None, pointer: 
         pointer += 1
         remainder, v_list, a_list, pointer = greedy_allocate(remainder, v_list, a_list, pointer)
 
-    # If still not divisible, remove one of this pack and allocate to smaller bins
-    if remainder > 0 and a_list[pointer] > 0:
+    # If still not divisible, remove one of this pack and allocate items to smaller packs.
+    while remainder > 0 and a_list[pointer] > 0:
         a_list[pointer] -= 1
         remainder = remainder + v_list[pointer]
         pointer += 1
@@ -77,6 +78,7 @@ def exhaustive_allocate(remainder, v_list, a_list=None, pointer=0, a_list_opt=No
     :return: list, current optimal allocation list
 
     Examples:
+
     >>> exhaustive_allocate(14, [8, 5, 2])
     [0, 0, 7] 14 <== Potential Solution
     [0, 2, 2] 14 <== Potential Solution
@@ -113,14 +115,3 @@ def exhaustive_allocate(remainder, v_list, a_list=None, pointer=0, a_list_opt=No
             v_list, a_list_opt = exhaustive_allocate(remainder, v_list, a_list, pointer + 1,
                                                      a_list_opt)
     return v_list, a_list_opt
-
-
-if __name__ == '__main__':
-    allocate = exhaustive_allocate
-    # allocate = greedy_allocate
-    print("test 14:")
-    print(allocate(14, [8, 5, 2]))
-    print("test 11:")
-    print(allocate(11, [8, 5, 2]))
-    print(allocate(10, [5, 2]))
-    # print(allocate(12, [3, 5, 9]))

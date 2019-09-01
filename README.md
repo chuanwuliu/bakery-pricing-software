@@ -16,7 +16,7 @@ A straightforward solution to this problem is to the exhaustive search.
 Here, I propose a greedy heuristic approximation. Please see the description in
  [documentation](https://github.com/chuanwuliu/bakery-pricing-software/blob/master/docs/comparison.pdf)
 
-## Run the code
+## Run the Code
    ## Prerequisites:
         * Python 3.6
         * Git
@@ -34,6 +34,7 @@ Here, I propose a greedy heuristic approximation. Please see the description in
    ```
    ## Interface
    ```bash
+   # The command line interface
    python -m bakery-pricing-software -input path/to/your/input.json
    ```   
    * The input must be in JSON format with code-quantity key-value pair, an example input is 
@@ -44,7 +45,7 @@ Here, I propose a greedy heuristic approximation. Please see the description in
       "CF": 13
     }
  ```
-More example inputs can be found in bakery-pricing-software-tests/
+More example inputs can be found in bakery-pricing-software/tests/
   * The output in generated in JSON format. An example output is
   ```json
 {
@@ -73,7 +74,8 @@ More example inputs can be found in bakery-pricing-software-tests/
     }
 }
 ```
-## Configuration of products
+
+## Configuration of Products
 This software allows the bakery to update their product configuration. See
 bakery-pricing-software/software/products.json for current configuration.
 The bakery can also config the production capacity in the configuration, 
@@ -94,3 +96,6 @@ Two working cases are tested:
 
 All exception cases listed in Errors are also tested.
 For test cases to the algorithm see the documentation. 
+
+## Contact:
+Chuanwu Liu: dr.liuchuanwu@gmail.com

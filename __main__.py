@@ -18,17 +18,22 @@ def args():
 
 if __name__ == "__main__":
 
+    # Set work directory
     work_dir = os.path.dirname(__file__)
     sys.path.append(work_dir)
 
+    # Instantiate a processor
     from software import Processor
-
     p = Processor()
 
+    # Read input data
     input_file = args().input_file
     input_data = p.order_data(input_file)
+
+    # Process order
     output = p.process_order(input_data)
 
+    # Print output
     output_file = args().output_file
     if output_file:
         with open(output_file, 'w') as file:

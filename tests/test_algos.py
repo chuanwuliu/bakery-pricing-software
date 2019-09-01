@@ -80,5 +80,6 @@ def test_greedy_with_exhaustive():
             reminder, v_list, a_list, _ = greedy_allocate(quantity, v_list)
             if a_lists_opt is not None:
                 assert reminder == 0
+                assert a_list in a_lists_opt
             if reminder != 0:
                 assert a_lists_opt is None

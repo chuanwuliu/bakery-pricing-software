@@ -20,12 +20,6 @@ Here, I propose a greedy heuristic approximation. Please see the description in
    ## Prerequisites:
         * Python 3.6
         * Git
-   ## Create a virtual environment, this step is optional
-   ```bash
-   # Replace bakery-venv with your own venv-name
-   python -m venv bakery-venv
-   source bakery-venv/bin/activate
-   ```
  
    ## Download and run
    ```bash

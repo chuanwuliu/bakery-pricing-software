@@ -16,6 +16,7 @@ class Processor(object):
     """
     Processor class
     """
+
     def __init__(self, product_table=None, algorithm='greedy'):
         """
         Processor initialization.
@@ -92,26 +93,36 @@ class Processor(object):
         """
         with open(path) as file:
             order = json.load(file)
+        self.check_order(order)
+        return order
 
+    def check_order(self, order):
+        """
+        Check if the order data is healthy
+
+        :param order: dict, order data
+        """
         for code, quantity in order.items():
             if code not in self.product_table:
                 raise OrderError('{} <== Wrong order code!'.format(code))
             if quantity > self.capacity(code):
-                raise OrderError('{} <== Order quantity exceed capacity!'.format(quantity))
+                raise OrderError('{} <== Order quantity exceeds capacity!'.format(quantity))
             if quantity % 1 > 0 or quantity < 1:
                 raise OrderError('{} <== Only positive integers accepted!'.format(quantity))
         return order
 
-    def process_order(self, path: str):
+    def process_order(self, order_data: dict):
         """
         Process the order from the file path. The input file must be in JSON format.
 
-        :param path: str, path to the input order.
+        :param path: dict, order data
+        :return dict, processed data
         """
-        order = self.order_data(path)
+        self.check_order(order_data)
+
         output = {}
 
-        for code, quantity in order.items():
+        for code, quantity in order_data.items():
             # Allocate packs to order using algorithms
             v_list = self.pack_volumes(code)
             price_list = [self.pack_price(code, units) for units in v_list]
@@ -129,26 +140,13 @@ class Processor(object):
                 raise ValueError('Wrong Algorithm!')
 
             output[code] = {}
+            output[code]['order'] = quantity
             total_price = np.dot(a_list, price_list).sum()
-            output[code]["price"] = total_price
+            output[code]["price"] = total_price.round(2)
             output[code]['packs'] = {}
             for i in range(len(a_list)):
                 if a_list[i] > 0:
                     pack = '{} $ {}'.format(v_list[i], price_list[i])
                     output[code]['packs'][pack] = a_list[i]
 
-            # This is tweak for printing expected example
-            total_price = np.dot(a_list, price_list).sum()
-            print("{} {} $ {}".format(quantity, code, total_price.round(2)))
-            for i in range(len(v_list)):
-                a = a_list[i]
-                if a > 0:
-                    print('      {} \u2715 {} $ {}'.format(a, v_list[i], price_list[i]))
-
         return output
-
-if __name__ == '__main__':
-    p = Processor()
-    path = '/Users/charles_liu/Github/bakery-pricing-software/tests/input_1.csv'
-    print(p.process_order(path))
-

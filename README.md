@@ -14,7 +14,7 @@ An optimal solution is to minimize total number of packs a<sub>1</sub>+a<sub>2</
 A straightforward solution to this problem is to the exhaustive search.
  However, it is computationally expensive when $m$ is large.
 Here, I propose a greedy heuristic approximation. Please see the description in
- [documentation](https://github.com/chuanwuliu/bakery-pricing-software/blob/master/docs/comparison.pdf)
+ [documentation](https://github.com/chuanwuliu/bakery-pricing-software/blob/master/docs/algorithms.pdf)
 
 ## Run the Code
    ## Prerequisites:

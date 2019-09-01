@@ -89,6 +89,11 @@ The software will raise errors in these cases:
   * Order quantity exceeds the production capacity
 
 ## Test Cases:
+Run the test cases
+```bash
+cd bakery-pricing-software/tests/
+pytest
+```
 
 Two working cases are tested:
   * The example input given in the specification

@@ -24,7 +24,7 @@ Here, I propose a greedy heuristic approximation. Please see the description in
    ```bash
    # Replace bakery-venv with your own venv-name
    python -m venv bakery-venv
-   source bakery-venv/bin/activiate
+   source bakery-venv/bin/activate
    ```
  
    ## Download and run
